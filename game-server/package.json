@@ -1,0 +1,1 @@
+{    "name":"enchanter_battle",    "version":"0.0.1",    "private":false,    "dependencies":{        "pomelo":"2.2.5",        "async":"^2.4.0"    },    "scripts":{        "dev": "supervisor ./app.js"    }}
