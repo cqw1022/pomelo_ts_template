@@ -1,8 +1,31 @@
-var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var uglify = require('gulp-uglify');
+var gulp       = require('gulp');
+var ts         = require('gulp-typescript');
+var uglify     = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var supervisor = require( "gulp-supervisor" );
+var fs         = require("fs");
+
+function deleteall(path) {  
+    var files = [];  
+    if(fs.existsSync(path)) {  
+        files = fs.readdirSync(path);  
+        files.forEach(function(file, index) {  
+            var curPath = path + "/" + file;  
+            if(fs.statSync(curPath).isDirectory()) { // recurse  
+                deleteall(curPath);  
+            } else { // delete file  
+                fs.unlinkSync(curPath);  
+            }  
+        });  
+        fs.rmdirSync(path);  
+    }  
+};  
+
+function clear_output(){
+    deleteall("../game-server/app")
+    deleteall("../game-server/global")
+}
+
 
 gulp.task('release', function () {
     var tsResult = gulp.src('src/**/*.ts')
@@ -13,7 +36,7 @@ gulp.task('release', function () {
     return tsResult
         .pipe(uglify())
         .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-        .pipe(gulp.dest('../game-server/app/'));
+        .pipe(gulp.dest('../game-server/'));
 
 });
 
@@ -25,23 +48,37 @@ gulp.task('debug', function () {
 
     return tsResult
         .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
-        .pipe(gulp.dest('../game-server/app/'));
+        .pipe(gulp.dest('../game-server/'));
 
-});
-
-gulp.task('release', ['release'], function() {
-    gulp.watch('src/**/*.ts', ['release']);
 });
 
 
 gulp.task('dev', ['debug'], function() {
+    clear_output();
+    gulp.src('src/**/*.ts')
+        .pipe(ts({
+            noImplicitAny: false
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
+        .pipe(gulp.dest('../game-server/'));
+
     gulp.watch('src/**/*.ts', ['debug']);
 });
 
 gulp.task( "dev_run", function() {
+    clear_output();
+    gulp.src('src/**/*.ts')
+        .pipe(ts({
+            noImplicitAny: false
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write()) // Now the sourcemaps are added to the .js file
+        .pipe(gulp.dest('../game-server/'));
+
     gulp.watch('src/**/*.ts', ['debug']);
     supervisor( "../game-server/app.js",{
-        watch: [ "../game-server/app" ]
+        watch: [ "../game-server/app","../game-server/global","../game-server/app.js" ]
     } );
 } );
 //
