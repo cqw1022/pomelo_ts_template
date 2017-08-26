@@ -1,2 +1,5 @@
 node_modules/
 game-server/app/
+.idea/
+
+package-lock.json
