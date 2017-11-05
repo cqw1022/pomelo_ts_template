@@ -67,7 +67,7 @@ gulp.task('dev', ['debug'], function() {
 });
 
 gulp.task( "dev_run", function() {
-    clear_output();
+    // clear_output();
     gulp.src('src/**/*.ts')
         .pipe(ts({
             noImplicitAny: false
@@ -78,6 +78,7 @@ gulp.task( "dev_run", function() {
 
     gulp.watch('src/**/*.ts', ['debug']);
     supervisor( "../game-server/app.js",{
+        args: ["env=development"],
         watch: [ "../game-server/app","../game-server/global","../game-server/app.js" ]
     } );
 } );

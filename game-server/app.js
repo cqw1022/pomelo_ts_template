@@ -23,7 +23,7 @@ app.configure('production|development', 'connector', function () {
         connector: pomelo.connectors.hybridconnector,
         heartbeat: 3,
         useDict: true,
-        useProtobuf: true
+        useProtobuf: false
     });
 });
 app.configure('production|development', 'game_logic', function () {
